@@ -29,6 +29,30 @@ http://localhost:3000
 docker compose -f docker-compose.local.yml up -d --build
 ```
 
+## 挂载到子路径
+
+同一容器默认继续支持根路径 `/`，也可以在启动时通过 `APP_BASE_PATH` 额外开放一个子路径，无需重新构建镜像：
+
+```bash
+APP_BASE_PATH=/tools/canvas docker compose up -d
+```
+
+随后容器同时支持 `/` 和 `/tools/canvas/`。子路径可以包含多个路径段，每段只允许英文字母、数字、下划线和连字符；尾部斜杠会自动统一。为避免同一个 URL 同时表示根路径业务页和子路径入口，首段不能使用现有路由名 `image`、`video`、`assets`、`prompts`、`canvas` 或 `config`。非法值会阻止容器启动并输出原因。
+
+宿主反向代理必须保留原始子路径，由容器内的 Nginx 识别并剥离。以 Nginx 为例，`proxy_pass` 后不要添加会移除前缀的尾部斜杠：
+
+```nginx
+location = /tools/canvas {
+    proxy_pass http://127.0.0.1:3000;
+}
+
+location /tools/canvas/ {
+    proxy_pass http://127.0.0.1:3000;
+}
+```
+
+如果宿主已经在转发前剥离子路径，则不要设置 `APP_BASE_PATH`。根路径与子路径位于同一来源时会共享现有浏览器本地数据。
+
 ## 文档站镜像
 
 文档站位于 `docs/` 目录，按带服务端能力的 Next.js standalone 应用单独构建，不打进主应用镜像。
