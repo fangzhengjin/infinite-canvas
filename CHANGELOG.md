@@ -2,6 +2,8 @@
 
 ## Unreleased
 
++ [新增] 支持 iframe 通过 URL 参数和父窗口消息同步浅色或深色主题。
+
 ## v0.16.0 - 2026-08-18
 
 + [新增] 提示词来源新增 Freestylefly GPT Image 2 内置来源。

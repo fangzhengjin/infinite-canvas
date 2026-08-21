@@ -8,11 +8,19 @@
         <title>无限画布</title>
         <script>
             try {
-                var s = JSON.parse(localStorage.getItem("infinite-canvas:theme_store") || "{}");
-                var t = s.state && s.state.theme === "light" ? "light" : "dark";
+                var q = new URLSearchParams(location.search).get("theme");
+                var t = q === "light" || q === "dark" ? q : null;
+                if (!t) {
+                    var s = JSON.parse(localStorage.getItem("infinite-canvas:theme_store") || "{}");
+                    t = s.state && s.state.theme === "light" ? "light" : "dark";
+                }
                 document.documentElement.classList.toggle("dark", t === "dark");
                 document.documentElement.style.colorScheme = t;
-            } catch (e) {}
+            } catch (e) {
+                console.warn("主题初始化失败，已回退为深色主题。", e);
+                document.documentElement.classList.add("dark");
+                document.documentElement.style.colorScheme = "dark";
+            }
         </script>
     </head>
     <body class="bg-background text-foreground antialiased">
