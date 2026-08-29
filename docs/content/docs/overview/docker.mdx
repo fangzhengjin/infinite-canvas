@@ -21,6 +21,30 @@ Open `http://localhost:3000`.
 docker compose -f docker-compose.local.yml up -d --build
 ```
 
+## Mount under a subpath
+
+The same container continues to serve `/` and can expose one additional subpath at startup through `APP_BASE_PATH`, without rebuilding the image:
+
+```bash
+APP_BASE_PATH=/tools/canvas docker compose up -d
+```
+
+The container then serves both `/` and `/tools/canvas/`. A subpath may contain multiple segments; each segment accepts only letters, numbers, underscores, and hyphens, and a trailing slash is normalized automatically. To prevent one URL from representing both a root application route and the mounted application, the first segment cannot be `image`, `video`, `assets`, `prompts`, `canvas`, or `config`. Invalid values stop container startup with an explicit error.
+
+The host reverse proxy must preserve the original prefix so the container's Nginx can recognize and remove it. For Nginx, keep `proxy_pass` without a trailing slash:
+
+```nginx
+location = /tools/canvas {
+    proxy_pass http://127.0.0.1:3000;
+}
+
+location /tools/canvas/ {
+    proxy_pass http://127.0.0.1:3000;
+}
+```
+
+If the host already strips the subpath before forwarding, leave `APP_BASE_PATH` unset. Root and subpath entry points on the same origin share the existing browser-local data.
+
 ## Documentation image
 
 The documentation in `docs/` is a separate Next.js standalone application with server capabilities.

@@ -7,3 +7,6 @@ services:
     ports:
       - "3000:3000"
     restart: unless-stopped
+    environment:
+      # 默认只使用根路径；设置为 /tools/canvas 等路径时，同一容器会同时支持根路径和该子路径。
+      APP_BASE_PATH: ${APP_BASE_PATH:-/}

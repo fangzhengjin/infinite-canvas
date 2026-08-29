@@ -5,6 +5,7 @@ import type { CanvasPlugin } from "@/types/canvas-plugin";
 import i18n from "@/i18n";
 
 const cleanups = new Map<string, () => void>();
+const localPluginsIndexUrl = new URL("plugins/index.json", document.baseURI);
 
 // A remote plugin may export CanvasPlugin directly or a factory that receives runtime and returns CanvasPlugin.
 // The factory uses runtime.React so the bundle does not need its own React copy.
@@ -117,7 +118,7 @@ export async function ensurePluginsLoaded() {
 async function loadLocalPlugins() {
     let urls: unknown;
     try {
-        const response = await fetch("/plugins/index.json");
+        const response = await fetch(localPluginsIndexUrl);
         if (!response.ok) return;
         urls = await response.json();
     } catch {
@@ -126,7 +127,8 @@ async function loadLocalPlugins() {
     if (!Array.isArray(urls) || !urls.length) return;
     const store = usePluginStore.getState();
     await Promise.all(
-        urls.map(async (url: string) => {
+        urls.map(async (path: string) => {
+            const url = new URL(path, document.baseURI).href;
             try {
                 const source = await fetchPluginSource(withCacheBust(url));
                 const plugin = await evaluatePluginSource(source);

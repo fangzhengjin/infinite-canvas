@@ -10,7 +10,7 @@ const webDir = dirname(fileURLToPath(import.meta.url));
 const localVersion = readFileSync(resolve(webDir, "../VERSION"), "utf8").trim() || "dev";
 const localChangelog = readFileSync(resolve(webDir, "../CHANGELOG.md"), "utf8");
 
-// Expose /plugins/index.json with local plugin files from public/plugins.
+// Expose plugins/index.json with local plugin files from public/plugins.
 // The frontend can discover and list them when enabled; development reads the directory live, while builds emit a static registry.
 function localPluginsManifest(): Plugin {
     const pluginsDir = resolve(webDir, "public/plugins");
@@ -19,7 +19,7 @@ function localPluginsManifest(): Plugin {
             return readdirSync(pluginsDir)
                 .filter((file) => file.endsWith(".js"))
                 .sort()
-                .map((file) => `/plugins/${file}`);
+                .map((file) => `plugins/${file}`);
         } catch {
             return [];
         }
