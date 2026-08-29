@@ -1,4 +1,5 @@
 import i18n from "@/i18n";
+import { resolveGithubUrl } from "@/lib/github-proxy";
 import type { PromptSource } from "./prompt-source-presets";
 
 export type RawPrompt = {
@@ -23,7 +24,7 @@ export type RawPrompt = {
 type RunOptions = { signal?: AbortSignal };
 
 async function fetchSource(source: PromptSource, options?: RunOptions) {
-    const response = await fetch(source.url, { cache: "no-store", signal: options?.signal });
+    const response = await fetch(resolveGithubUrl(source.url), { cache: "no-store", signal: options?.signal });
     if (!response.ok) throw new Error(i18n.t("config.promptSources.runtime.requestFailed", { status: response.status }));
     return response.json();
 }
@@ -59,8 +60,8 @@ function normalizeItems(values: unknown[], source: PromptSource) {
         const id = stringValue(record.id).trim() || `${source.id}-${leftPad(index + 1)}`;
         if (seen.has(id)) return;
         seen.add(id);
-        const referenceImageUrls = stringArray(record.referenceImageUrls).map((url) => absoluteUrl(source.url, url));
-        const coverUrl = absoluteUrl(source.url, stringValue(record.coverUrl)) || referenceImageUrls[0] || "";
+        const referenceImageUrls = stringArray(record.referenceImageUrls).map((url) => resourceUrl(source.url, url));
+        const coverUrl = resourceUrl(source.url, stringValue(record.coverUrl)) || referenceImageUrls[0] || "";
         items.push({
             id,
             title,
@@ -112,6 +113,10 @@ function absoluteUrl(baseUrl: string, path: string) {
     } catch {
         return path;
     }
+}
+
+function resourceUrl(baseUrl: string, path: string) {
+    return resolveGithubUrl(absoluteUrl(baseUrl, path));
 }
 
 function leftPad(value: number) {
