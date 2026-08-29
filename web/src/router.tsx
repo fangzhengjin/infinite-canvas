@@ -12,6 +12,8 @@ import NotFound from "@/pages/not-found";
 import PromptsPage from "@/pages/prompts";
 import VideoPage from "@/pages/video";
 
+const basename = new URL(document.baseURI).pathname.replace(/\/$/, "") || "/";
+
 export const router = createBrowserRouter([
     {
         element: (
@@ -32,4 +34,4 @@ export const router = createBrowserRouter([
         ],
     },
     { path: "*", element: <NotFound /> },
-]);
+], { basename });

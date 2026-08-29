@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/u
 import { cn } from "@/lib/utils";
 import { modelOptionLabel, modelOptionName, selectableModelsByCapability, type AiConfig, type ModelCapability } from "@/stores/use-config-store";
 
+const modelIconBaseUrl = new URL("icons/", document.baseURI);
+
 type ModelPickerProps = {
     config: AiConfig;
     value?: string;
@@ -107,11 +109,11 @@ function ModelIcon({ model }: { model: string }) {
 
 function resolveModelIcon(model: string) {
     const name = model.toLowerCase();
-    if (name.includes("claude") || name.includes("anthropic")) return "/icons/claude.svg";
-    if (name.includes("gemini") || name.includes("google")) return "/icons/gemini.svg";
-    if (name.includes("gpt") || name.includes("openai")) return "/icons/openai.svg";
-    if (name.includes("grok") || name.includes("grok")) return "/icons/grok.svg";
-    if (name.includes("deepseek") || name.includes("deepseek")) return "/icons/deepseek.svg";
-    if (name.includes("glm") || name.includes("glm")) return "/icons/glm.svg";
+    if (name.includes("claude") || name.includes("anthropic")) return new URL("claude.svg", modelIconBaseUrl).href;
+    if (name.includes("gemini") || name.includes("google")) return new URL("gemini.svg", modelIconBaseUrl).href;
+    if (name.includes("gpt") || name.includes("openai")) return new URL("openai.svg", modelIconBaseUrl).href;
+    if (name.includes("grok") || name.includes("grok")) return new URL("grok.svg", modelIconBaseUrl).href;
+    if (name.includes("deepseek") || name.includes("deepseek")) return new URL("deepseek.svg", modelIconBaseUrl).href;
+    if (name.includes("glm") || name.includes("glm")) return new URL("glm.svg", modelIconBaseUrl).href;
     return "";
 }
