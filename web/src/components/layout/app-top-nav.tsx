@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import { useAgentStore } from "@/stores/use-agent-store";
 
+const logoUrl = new URL("logo.svg", document.baseURI).href;
+
 export function AppTopNav() {
     const { t } = useTranslation();
     const { pathname } = useLocation();
@@ -42,8 +44,8 @@ export function AppTopNav() {
                                 <span
                                     className="size-5 shrink-0 bg-current"
                                     style={{
-                                        mask: "url(/logo.svg) center / contain no-repeat",
-                                        WebkitMask: "url(/logo.svg) center / contain no-repeat",
+                                        mask: `url(${logoUrl}) center / contain no-repeat`,
+                                        WebkitMask: `url(${logoUrl}) center / contain no-repeat`,
                                     }}
                                 />
                                 <span className="text-base font-medium">{t("meta.title")}</span>
